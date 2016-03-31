@@ -112,6 +112,34 @@ func (c *connection) GetMasterStatus() (pos uint32, filename string, err error) 
 	return
 }
 
+func (c *connection) GetColumns(dbName string, tableName string) ([]string, error) {
+	err := c.initDb(_DEFAULT_DB)
+	if err != nil {
+		return nil, err
+	}
+	rs, err := c.query(fmt.Sprintf("select COLUMN_NAME from information_schema.COLUMNS where table_name = '%s' and table_schema = '%s' ORDER BY ORDINAL_POSITION ASC", dbName, tableName))
+	if err != nil {
+		return nil, err
+	}
+	columns := make([]string, 0)
+	for {
+		pack, err := rs.nextRow()
+		if err == nil {
+			column, err := pack.readStringLength()
+			if err == nil {
+				columns = append(columns, string(column))
+			} else if err != EOF_ERR {
+				return nil, err
+			}
+		} else if err == EOF_ERR {
+			break
+		} else {
+			return nil, err
+		}
+	}
+	return columns, nil
+}
+
 func (c *connection) ChecksumCompatibility() (ok bool, err error) {
 	err = c.initDb(_DEFAULT_DB)
 	if err != nil {
