@@ -117,7 +117,7 @@ func (c *connection) GetColumns(dbName string, tableName string) ([]string, erro
 	if err != nil {
 		return nil, err
 	}
-	rs, err := c.query(fmt.Sprintf("select COLUMN_NAME from information_schema.COLUMNS where table_name = '%s' and table_schema = '%s' ORDER BY ORDINAL_POSITION ASC", dbName, tableName))
+	rs, err := c.query(fmt.Sprintf("select COLUMN_NAME from information_schema.COLUMNS where table_name = '%s' and table_schema = '%s' ORDER BY ORDINAL_POSITION ASC", tableName, dbName))
 	if err != nil {
 		return nil, err
 	}
