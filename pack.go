@@ -307,6 +307,27 @@ func (r *pack) readStringLength() ([]byte, error) {
 	return r.Next(int(length)), nil
 }
 
+func (r *pack) readColumnStringLength() ([]byte, error) {
+	var (
+		length uint64
+		null   bool
+	)
+
+	err := r.readIntLengthOrNil(&length, &null)
+
+	if err != nil {
+		return []byte{}, err
+	}
+
+	if length == 0 {
+		return []byte{}, nil
+	}
+	if length < 256 {
+		r.Next(1)
+	}
+	return r.Next(int(length)), nil
+}
+
 func (r *pack) readIntLengthOrNil(value *uint64, null *bool) error {
 	lb, err := r.ReadByte()
 

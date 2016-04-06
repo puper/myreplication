@@ -301,7 +301,7 @@ func (event *rowsEvent) read(pack *pack) {
 					MYSQL_TYPE_TINY_BLOB, MYSQL_TYPE_GEOMETRY, MYSQL_TYPE_BIT:
 					value.value, _ = pack.readStringLength()
 				case MYSQL_TYPE_STRING, MYSQL_TYPE_VARCHAR, MYSQL_TYPE_VAR_STRING:
-					val, _ := pack.readStringLength()
+					val, _ := pack.readColumnStringLength()
 					value.value = string(val)
 				case MYSQL_TYPE_DECIMAL, MYSQL_TYPE_NEWDECIMAL:
 					value.value = pack.readNewDecimal(int(column.MetaInfo[0]), int(column.MetaInfo[1]))
